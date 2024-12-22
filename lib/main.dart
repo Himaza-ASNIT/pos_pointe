@@ -1,9 +1,15 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:pos_pointe/pages/signin.dart';
+import 'package:pos_pointe/firebase_options.dart';
+import 'package:pos_pointe/pages/auth_page.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -22,7 +28,7 @@ class MyApp extends StatelessWidget {
         splashIconSize: double.infinity,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         duration: 1000,
-        nextScreen: const SigninPage(),
+        nextScreen: const AuthPage(),
       ),
     );
   }

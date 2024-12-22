@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1056308799846",
+    "project_id": "pospointe-4d697",
+    "storage_bucket": "pospointe-4d697.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056308799846:android:3a051f82e3257b3f6440a7",
+        "android_client_info": {
+          "package_name": "com.example.pos_pointe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVuiDta16ph6zJAGZA0CvWHA7gByfYYHM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
