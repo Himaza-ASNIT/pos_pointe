@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:pos_pointe/pages/signin.dart';
 import 'package:pos_pointe/widgets/mybutton.dart';
 import 'package:pos_pointe/widgets/squaretile.dart';
 import 'package:pos_pointe/widgets/textfield.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupPage extends StatefulWidget {
-  final Function()? onTap;
-  const SignupPage({super.key, required this.onTap});
+  const SignupPage({super.key});
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -16,124 +18,80 @@ class _SignupPageState extends State<SignupPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final localAuth = LocalAuthentication();
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  bool isloading = false;
 
-  //sign user up method
-  void signUserUp() async {
-    // Input Validation
-    if (!validateInputs()) return;
-
-    // Show loading indicator
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-
-    try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-      Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      handleAuthError(e);
-    } catch (e) {
-      Navigator.pop(context);
-      showErrorDialog("An unexpected error occurred. Please try again.");
-    }
-  }
-
-// Validate all inputs
-  bool validateInputs() {
-    final email = emailController.text.trim();
-    final password = passwordController.text;
-    final confirmPassword = confirmPasswordController.text;
-
-    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      showErrorDialog("Please fill in all fields.");
-      return false;
-    }
-
-    if (!isValidEmail(email)) {
-      showErrorDialog("Invalid email format.");
-      return false;
-    }
-
-    if (password.length < 6) {
-      showErrorDialog("Password must be at least 6 characters long.");
-      return false;
-    }
-
-    if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$').hasMatch(password)) {
-      showErrorDialog(
-          "Password must contain at least one letter and one number.");
-      return false;
-    }
+  // signup with email password
+  Future<void> signUpWithEmailPasssword() async {
+    String email = emailController.text;
+    String password = passwordController.text;
+    String confirmPassword = confirmPasswordController.text;
 
     if (password != confirmPassword) {
-      showErrorDialog("Passwords do not match.");
-      return false;
+      showErrorMessage("Password don't match");
+      return;
     }
+    setState(() {
+      isloading = true;
+    });
+    try {
+      await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
 
-    return true;
-  }
+      bool? enableBiometric = await showBiometricDialog();
 
-// Validate email format
-  bool isValidEmail(String email) {
-    return RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-        .hasMatch(email);
-  }
-
-// Handle Firebase-specific errors
-  void handleAuthError(FirebaseAuthException e) {
-    String message = "An error occurred. Please try again.";
-
-    switch (e.code) {
-      case 'invalid-email':
-        message = "The email address is not valid.";
-        break;
-      case 'email-already-in-use':
-        message = "This email is already registered. Try logging in.";
-        break;
-      case 'operation-not-allowed':
-        message = "Sign-up is currently disabled. Please contact support.";
-        break;
-      case 'weak-password':
-        message = "The password is too weak.";
-        break;
-      case 'network-request-failed':
-        message = "Network error. Please check your connection.";
-        break;
-      default:
-        message = e.message ?? "An unexpected error occurred.";
+      if (enableBiometric == true) {
+        preferences.setBool("Biometric enabled", true);
+      }
+      showSuccessMessage('Account created successfully!');
+      Navigator.pop(context);
+    } catch (e) {
+      showErrorMessage('Failed to sign up. Try again!');
+    } finally {
+      setState(() {
+        isloading = false;
+      });
     }
-    showErrorDialog(message);
   }
 
-// Show error dialog
-  void showErrorDialog(String message) {
-    showDialog(
+  //pop up to enable biometric login
+  Future<bool?> showBiometricDialog() async {
+    return showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Sign Up Failed"),
-          content: Text(message),
+          title: Text('Enable Biometric Login?'),
+          content: Text(
+              'Would you like to enable fingerprint login for the next time?'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("OK"),
+              onPressed: () => Navigator.pop(context, true),
+              child: Text('Yes'),
             )
           ],
         );
       },
     );
+  }
+
+  //method for show error messaage
+  void showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  // Method to show success message
+  void showSuccessMessage(String messaage) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(messaage),
+      backgroundColor: Colors.green,
+    ));
   }
 
   @override
@@ -151,9 +109,9 @@ class _SignupPageState extends State<SignupPage> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                 // Logo
                 Image.asset(
                   'assets/pos_point_bgr.png', // Path to your image
@@ -197,7 +155,7 @@ class _SignupPageState extends State<SignupPage> {
 
                 //sign in button
                 Mybutton(
-                  onTap: signUserUp,
+                  onTap: signUpWithEmailPasssword,
                   text: 'Sign up',
                 ),
                 const SizedBox(height: 25),
@@ -251,9 +209,14 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     const SizedBox(width: 4),
                     GestureDetector(
-                      onTap: widget.onTap,
-                      child: const Text(
-                        "Sign In here",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SigninPage()),
+                        );
+                      },
+                      child: Text(
+                        "Sign in",
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
@@ -262,9 +225,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ])),
         ),
       ),
     );

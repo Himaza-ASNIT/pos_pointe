@@ -5,8 +5,11 @@ class ItemsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text("Items page"),
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: Text("ITEMS PAGE"),
+      ),
     );
   }
 }
