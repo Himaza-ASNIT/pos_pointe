@@ -1,13 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:pos_pointe/pages/home_page.dart';
+import 'package:pos_pointe/pages/signup.dart';
 import 'package:pos_pointe/widgets/mybutton.dart';
 import 'package:pos_pointe/widgets/squaretile.dart';
 import 'package:pos_pointe/widgets/textfield.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SigninPage extends StatefulWidget {
-  final Function()? onTap;
-  const SigninPage({super.key, required this.onTap});
+  const SigninPage({
+    super.key,
+  });
 
   @override
   State<SigninPage> createState() => _SigninPageState();
@@ -16,137 +20,118 @@ class SigninPage extends StatefulWidget {
 class _SigninPageState extends State<SigninPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final LocalAuthentication auth = LocalAuthentication(); // Local Auth instance
+  final localAuth = LocalAuthentication(); // Local Auth instance
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final bool isBiometricEnablled = false;
+  bool _isAuthInProgress =
+      false; // Flag to track if authentication is in progress
 
-  //sign user in method
-  void signUserIn() async {
-    // Input Validation
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      showErrorDialog("Please fill in all fields.");
-      return;
-    }
+  @override
+  void initState() {
+    super.initState();
+    checkBiometricLogin();
+  }
 
-    if (!isValidEmail(emailController.text)) {
-      showErrorDialog("Invalid email format.");
-      return;
-    }
-
-    // Show loading indicator
-    showDialog(
-        context: context,
-        barrierDismissible: false, // Prevent dismiss while loading
-        builder: (context) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        });
-
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-
-      if (mounted) {
-        Navigator.pop(context);
-      }
-
-      // Biometric authentication check
-      bool canAuthenticate = await auth.canCheckBiometrics;
-      if (canAuthenticate) {
-        bool isAuthenticated = await authenticateWithBiometrics();
-        if (isAuthenticated && mounted) {
-          Navigator.pushReplacementNamed(context, '/home');
-        } else {
-          if (mounted) {
-            showErrorDialog(
-                "Biometric authentication failed. Please login again.");
-          }
-        }
-      } else {
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/home');
-        }
-      }
-    } on FirebaseAuthException catch (e) {
-      if (mounted) {
-        Navigator.pop(context);
-        handleAuthError(e);
-      }
-    } catch (e) {
-      if (mounted) {
-        Navigator.pop(context);
-        showErrorDialog("An unexpected error occurred. Please try again.");
-      }
+  //check biometric login
+  Future<void> checkBiometricLogin() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    bool isEnabled = preferences.getBool('biometric_enabled') ?? false;
+    if (isEnabled) {
+      authenticateBiometric();
     }
   }
 
-  // Authenticate with biometrics
-  Future<bool> authenticateWithBiometrics() async {
+  //biometric authentication method
+  Future<void> authenticateBiometric() async {
+    // Prevent authentication if it's already in progress
+    if (_isAuthInProgress) return;
+
+    setState(() {
+      _isAuthInProgress = true; // Mark authentication as in progress
+    });
+
+    bool authenticated = false;
+
     try {
-      bool isAuthenticated = await auth.authenticate(
-        localizedReason: 'Please authenticate to access your account',
+      authenticated = await localAuth.authenticate(
+        localizedReason: 'Scan your fingerprint to login',
         options: const AuthenticationOptions(
           stickyAuth: true,
           biometricOnly: true,
         ),
       );
-      return isAuthenticated;
+
+      if (authenticated) {
+        User? user = auth.currentUser;
+        if (user != null) {
+          navigateToHome();
+        } else {
+          showError('Session expired. Please log in again');
+        }
+      }
     } catch (e) {
-      return false;
+      print('Authentication failed: $e');
+    } finally {
+      setState(() {
+        _isAuthInProgress = false; // Reset the flag once done
+      });
     }
   }
 
-  // Validate email format
-  bool isValidEmail(String email) {
-    return RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-        .hasMatch(email);
-  }
-
-  // Handle Firebase-specific errors
-  void handleAuthError(FirebaseAuthException e) {
-    String message = "An error occurred. Please try again.";
-
-    switch (e.code) {
-      case 'invalid-email':
-        message = "The email address is not valid.";
-        break;
-      case 'user-disabled':
-        message = "This user account has been disabled.";
-        break;
-      case 'user-not-found':
-        message = "No user found with this email.";
-        break;
-      case 'wrong-password':
-        message = "Incorrect password. Please try again.";
-        break;
-      case 'too-many-requests':
-        message = "Too many login attempts. Try again later.";
-        break;
-      case 'network-request-failed':
-        message = "Network error. Please check your connection.";
-        break;
-      default:
-        message = e.message ?? "An unexpected error occurred.";
+  //navigate to home method
+  void navigateToHome() {
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     }
-    showErrorDialog(message);
   }
 
-  // Show error dialog
-  void showErrorDialog(String message) {
-    showDialog(
+  //show error method
+  void showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  // handle emali password login
+  Future<void> loginWithEmailPassword() async {
+    String email = emailController.text;
+    String password = passwordController.text;
+
+    try {
+      await auth.signInWithEmailAndPassword(email: email, password: password);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+
+      bool? enableBiometric = await showBiometricDialog();
+      if (enableBiometric == true) {
+        preferences.setBool('biometric_enabled', true);
+      }
+      navigateToHome();
+    } catch (e) {
+      showError('Invalid Email or Password');
+    }
+  }
+
+  //dialog to ask for Biometric permission
+  Future<bool?> showBiometricDialog() async {
+    return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text("Sign In Failed"),
-            content: Text(message),
+            title: Text('Enable Biometric Login?'),
+            content: Text(
+                'Would you like to enable fingerprint login for next time?'),
             actions: [
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text("OK"),
-              )
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('No'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text('Yes'),
+              ),
             ],
           );
         });
@@ -165,129 +150,133 @@ class _SigninPageState extends State<SigninPage> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: SingleChildScrollView(
-        child: SafeArea(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo
-                Image.asset(
-                  'assets/pos_point_bgr.png', // Path to your image
-                  width: 200,
-                  height: 200,
-                ),
-
-                // Welcome back text
-                Text(
-                  "Sign In to POS Pointe",
-                  style: TextStyle(
-                      color: Colors.grey[900],
-                      fontSize: 30,
-                      fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 25),
-
-                // email text field
-                MyTextField(
-                  controller: emailController,
-                  hintText: "Email",
-                  obscureText: false,
-                ),
-                const SizedBox(height: 25),
-
-                // Password text field
-                MyTextField(
-                  controller: passwordController,
-                  hintText: "Password",
-                  obscureText: true,
-                ),
-                const SizedBox(height: 10),
-
-                // forgot password
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        "Forgot Password?",
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                        ),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight:
+                MediaQuery.of(context).size.height, // Prevent infinite height
+          ),
+          child: SafeArea(
+            child: Center(
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/pos_point_bgr.png',
+                      width: 200,
+                      height: 200,
+                    ),
+                    Text(
+                      "Sign In to POS Pointe",
+                      style: TextStyle(
+                          color: Colors.grey[900],
+                          fontSize: 30,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 25),
+                    MyTextField(
+                      controller: emailController,
+                      hintText: "Email",
+                      obscureText: false,
+                    ),
+                    const SizedBox(height: 25),
+                    MyTextField(
+                      controller: passwordController,
+                      hintText: "Password",
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "Forgot Password?",
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 25),
-
-                //sign in button
-                Mybutton(
-                  onTap: signUserIn,
-                  text: 'Sign In',
-                ),
-                const SizedBox(height: 25),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Colors.grey[400],
-                        ),
+                    ),
+                    const SizedBox(height: 25),
+                    Mybutton(
+                      onTap: loginWithEmailPassword,
+                      text: 'Sign In',
+                    ),
+                    const SizedBox(height: 25),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              thickness: 0.5,
+                              color: Colors.grey[400],
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Text(
+                              "Or continue with",
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey[400],
+                              thickness: 0.5,
+                            ),
+                          )
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(
-                          "Or continue with",
+                    ),
+                    const SizedBox(height: 10),
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SquareTile(imagePath: 'assets/google.png'),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Not a member?",
                           style: TextStyle(
                             color: Colors.grey[700],
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          color: Colors.grey[400],
-                          thickness: 0.5,
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SignupPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "Sign up",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      )
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SquareTile(imagePath: 'assets/google.png'),
+                      ],
+                    ),
+                    const SizedBox(height: 25),
                   ],
                 ),
-                const SizedBox(height: 10),
-
-                //signup here!
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Not a member?",
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    GestureDetector(
-                      onTap: widget.onTap,
-                      child: const Text(
-                        "Sign Up here",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
           ),
         ),

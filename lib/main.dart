@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pos_pointe/firebase_options.dart';
 import 'package:pos_pointe/pages/auth_page.dart';
+import 'package:pos_pointe/pages/signin.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         splashIconSize: double.infinity,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         duration: 1000,
-        nextScreen: const AuthPage(),
+        nextScreen: const SigninPage(),
       ),
     );
   }
