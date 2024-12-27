@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:pos_pointe/pages/home_page.dart';
+import 'package:pos_pointe/pages/navigation.dart';
 import 'package:pos_pointe/pages/signup.dart';
 import 'package:pos_pointe/widgets/mybutton.dart';
-import 'package:pos_pointe/widgets/squaretile.dart';
+// import 'package:pos_pointe/widgets/squaretile.dart';
 import 'package:pos_pointe/widgets/textfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -83,7 +83,7 @@ class _SigninPageState extends State<SigninPage> {
     if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => Navigation()),
       );
     }
   }
@@ -191,14 +191,14 @@ class _SigninPageState extends State<SigninPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            "Forgot Password?",
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
+                        // children: [
+                        //   Text(
+                        //     "Forgot Password?",
+                        //     style: TextStyle(
+                        //       color: Colors.grey[600],
+                        //     ),
+                        //   ),
+                        // ],
                       ),
                     ),
                     const SizedBox(height: 25),
@@ -217,32 +217,32 @@ class _SigninPageState extends State<SigninPage> {
                               color: Colors.grey[400],
                             ),
                           ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Text(
-                              "Or continue with",
-                              style: TextStyle(
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: Colors.grey[400],
-                              thickness: 0.5,
-                            ),
-                          )
+                          // Padding(
+                          //   padding:
+                          //       const EdgeInsets.symmetric(horizontal: 10.0),
+                          //   child: Text(
+                          //     "Or continue with",
+                          //     style: TextStyle(
+                          //       color: Colors.grey[700],
+                          //     ),
+                          //   ),
+                          // ),
+                          // Expanded(
+                          //   child: Divider(
+                          //     color: Colors.grey[400],
+                          //     thickness: 0.5,
+                          //   ),
+                          // )
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SquareTile(imagePath: 'assets/google.png'),
-                      ],
-                    ),
+                    // const SizedBox(height: 10),
+                    // const Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     SquareTile(imagePath: 'assets/google.png'),
+                    //   ],
+                    // ),
                     const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

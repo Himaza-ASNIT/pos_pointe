@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pos_pointe/pages/signin.dart';
 import 'package:pos_pointe/widgets/mybutton.dart';
-import 'package:pos_pointe/widgets/squaretile.dart';
+// import 'package:pos_pointe/widgets/squaretile.dart';
 import 'package:pos_pointe/widgets/textfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -135,7 +135,7 @@ class _SignupPageState extends State<SignupPage> {
                   hintText: "Email",
                   obscureText: false,
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 10),
 
                 // Password text field
                 MyTextField(
@@ -169,33 +169,33 @@ class _SignupPageState extends State<SignupPage> {
                           color: Colors.grey[400],
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(
-                          "Or continue with",
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          color: Colors.grey[400],
-                          thickness: 0.5,
-                        ),
-                      )
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      //   child: Text(
+                      //     "Or continue with",
+                      //     style: TextStyle(
+                      //       color: Colors.grey[700],
+                      //     ),
+                      //   ),
+                      // ),
+                      // Expanded(
+                      //   child: Divider(
+                      //     color: Colors.grey[400],
+                      //     thickness: 0.5,
+                      //   ),
+                      // )
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
+                // const SizedBox(height: 10),
 
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SquareTile(imagePath: 'assets/google.png'),
-                  ],
-                ),
-                const SizedBox(height: 10),
+                // const Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     SquareTile(imagePath: 'assets/google.png'),
+                //   ],
+                // ),
+                // const SizedBox(height: 10),
 
                 //signup here!
                 Row(
