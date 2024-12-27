@@ -21,7 +21,7 @@ class _NavigationState extends State<Navigation> {
   }
 
   final List<Widget> pages = [
-    const Navigation(),
+    const HomePage(),
     const ReportPage(),
     const ItemsPage(),
     const MenuPage(),
