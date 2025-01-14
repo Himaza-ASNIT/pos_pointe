@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class MenuPage extends StatefulWidget {
-  const MenuPage({super.key});
+class ModifirePage extends StatefulWidget {
+  const ModifirePage({super.key});
 
   @override
-  State<MenuPage> createState() => _MenuPageState();
+  State<ModifirePage> createState() => _ModifirePageState();
 }
 
-class _MenuPageState extends State<MenuPage> {
+class _ModifirePageState extends State<ModifirePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
