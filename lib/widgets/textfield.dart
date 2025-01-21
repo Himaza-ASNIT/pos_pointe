@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MyTextField extends StatelessWidget {
+class MyTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
@@ -13,17 +13,43 @@ class MyTextField extends StatelessWidget {
   });
 
   @override
+  State<MyTextField> createState() => _MyTextFieldState();
+}
+
+class _MyTextFieldState extends State<MyTextField> {
+  bool _isObscured = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _isObscured = widget.obscureText; // Initialize based on the passed value
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextField(
-        controller: controller,
-        obscureText: obscureText,
+        controller: widget.controller,
+        obscureText: widget.obscureText ? _isObscured : false,
         decoration: InputDecoration(
-          hintText: hintText,
+          hintText: widget.hintText,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          suffixIcon: widget.obscureText
+              ? IconButton(
+                  icon: Icon(
+                    _isObscured ? Icons.visibility : Icons.visibility_off,
+                    size: 18,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isObscured = !_isObscured;
+                    });
+                  },
+                )
+              : null,
         ),
       ),
     );
