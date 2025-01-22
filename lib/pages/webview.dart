@@ -17,9 +17,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
   // final baseUrl = "";
   final List<String> pagePaths = [
     " ",
-    "https://mypospointe.com/marketplace",
+    "https://mypospointe.com/items",
+    "https://mypospointe.com/modifers",
     "https://mypospointe.com/flash_report",
-    "https://mypospointe.com/myPOS",
+    "https://mypospointe.com/mobileview",
+
   ];
 
   late WebViewController _webViewController;
@@ -37,11 +39,14 @@ class _WebViewScreenState extends State<WebViewScreen> {
     if (_currentIndex == 0) {
       return widget.redirectUrl; // Initial page
     } else if (_currentIndex == 1) {
-      return 'https://mypospointe.com/marketplace';
+      return 'https://mypospointe.com/items';
     } else if (_currentIndex == 2) {
+      return 'https://mypospointe.com/modifers';
+    } else if(_currentIndex == 3){
       return 'https://mypospointe.com/flash_report';
-    } else {
-      return 'https://mypospointe.com/myPOS';
+    }else{
+            return 'https://mypospointe.com/mobileview';
+
     }
   }
 
@@ -86,7 +91,17 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      onWillPop: () async {
+        if(Navigator.of(context).canPop()){
+          Navigator.of(context).pop();
+          return false;
+        }else{
+          return true;
+        }
+      },
+      child: Scaffold(
       appBar: AppBar(
         title: Text("My POS Pointe"),
       ),
@@ -110,6 +125,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         unselectedIconTheme: const IconThemeData(
           color: Color.fromRGBO(5, 5, 5, 1),
         ),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
@@ -117,18 +133,22 @@ class _WebViewScreenState extends State<WebViewScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add_shopping_cart_outlined),
-            label: "Market place",
+            label: "Items",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.currency_exchange_outlined),
+            icon: Icon(Icons.fastfood_outlined),
+            label: "Modifers",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book_outlined),
             label: "Flash Report",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.supervised_user_circle),
-            label: "MyPOS",
+            icon: Icon(Icons.menu_outlined),
+            label: "Menu",
           ),
         ],
       ),
-    );
+     ) );
   }
 }

@@ -46,8 +46,7 @@ class _SigninPageState extends State<SigninPage> {
     });
 
     try {
-      // Simulate successful login (replace with Firebase or your API)
-      if (email == "testmapp" && password == "Admin123") {
+      if (!email.isEmpty && !password.isEmpty) {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         bool? enableBiometric = await showBiometricDialog();
         if (enableBiometric == true) {
@@ -242,7 +241,16 @@ class _SigninPageState extends State<SigninPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        if(Navigator.of(context).canPop()){
+          Navigator.of(context).pop();
+          return false;
+        }else{
+          return true;
+        }
+      },
+      child: Scaffold(
       backgroundColor: Colors.grey[300],
       body: SingleChildScrollView(
         child: ConstrainedBox(
@@ -297,6 +305,6 @@ class _SigninPageState extends State<SigninPage> {
           ),
         ),
       ),
-    );
+    ),);
   }
 }
