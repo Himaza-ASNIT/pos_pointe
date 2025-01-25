@@ -33,97 +33,117 @@ class _SigninPageState extends State<SigninPage> {
 
   // Handle email-password login
   Future<void> loginWithEmailPassword() async {
-    String email = emailController.text.trim();
-    String password = passwordController.text;
+  String email = emailController.text.trim();
+  String password = passwordController.text;
 
-    if (email.isEmpty || password.isEmpty) {
-      showError('Email and password cannot be empty');
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      if (!email.isEmpty && !password.isEmpty) {
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        bool? enableBiometric = await showBiometricDialog();
-        if (enableBiometric == true) {
-          preferences.setBool('biometric_enabled', true);
-        }
-
-        // Fetch redirect URL after successful login
-        String? redirectUrl = await fetchRedirectUrl(email, password);
-        if (redirectUrl != null) {
-          navigateToRedirectPage(redirectUrl); // Navigate to the fetched URL
-        } else {
-          showError('Redirect URL not found');
-        }
-      } else {
-        showError('Invalid Email or Password');
-      }
-    } catch (e) {
-      showError('Login failed: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  // Check if email and password are not empty
+  if (email.isEmpty || password.isEmpty) {
+    showError('Email and password cannot be empty');
+    return;
   }
+
+  // Encode credentials
+  String encodedCredentials = encodeCredentials(email, password);
+  print("Encoded Credentials: $encodedCredentials");
+
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    // Prompt user for biometric login
+    bool? enableBiometric = await showBiometricDialog();
+    if (enableBiometric == true) {
+      preferences.setBool('biometric_enabled', true);
+
+      // Store credentials securely
+      await preferences.setString('email', email);
+      await preferences.setString('password', password);
+      await preferences.setString('encoded_credentials', encodedCredentials);
+      print('Biometric login enabled, credentials stored.');
+    }
+
+    // Fetch redirect URL after successful login
+    String? redirectUrl = await fetchRedirectUrl(encodedCredentials);
+    if (redirectUrl != null) {
+      navigateToRedirectPage(redirectUrl); // Navigate to the fetched URL
+    } else {
+      showError('Redirect URL not found');
+    }
+  } catch (e) {
+    showError('Login failed: $e');
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
+
+ 
+//method to create encoded credintial
+  String encodeCredentials( email, password) {
+  // Combine username and password with a colon
+  String credentials = '$email:$password';
+
+  // Convert the string into a UTF-8 encoded byte array
+  List<int> bytes = utf8.encode(credentials);
+
+  // Encode the byte array into a Base64 string
+  String base64Encoded = base64Encode(bytes);
+print('Base64 encoded: $base64Encoded');	
+  return base64Encoded;
+}
 
   // Fetch redirect URL from API
-  Future<String?> fetchRedirectUrl(String email, String password) async {
-    try {
-      // Prepare the headers
-      var headers = {
-        'Authorization': 'Basic dGVzdG1hcHA6QWRtaW4xMjM=',
-        'Cookie':
-            'ARRAffinity=92ca53ad8db4fbb93d4d3b7d8ab54dcf8ffecb2d731f25b0e91ad575d7534c3f; ARRAffinitySameSite=92ca53ad8db4fbb93d4d3b7d8ab54dcf8ffecb2d731f25b0e91ad575d7534c3f',
-        'Content-Type':
-            'application/json', // Ensure this is included if API expects JSON
-      };
+ Future<String?> fetchRedirectUrl(String encodedCredentials) async {
+  try {
+    // Prepare the headers with the encoded credentials
+    var headers = {
+      'Authorization': 'Basic $encodedCredentials',
+      'Content-Type': 'application/json',
+    };
 
-      // Prepare the request body
-      var body = jsonEncode({
-        'email': email, // Replace with correct key if needed
-        'password': password, // Replace with correct key if needed
-      });
+    // Prepare the request body
+    var body = jsonEncode({
+      'email': emailController.text.trim(),
+      'password': passwordController.text,
+    });
 
-      // Create the request
-      var request = http.Request(
-        'POST',
-        Uri.parse(
-            'https://asnitagentapi.azurewebsites.net/UserLogin/requestauth'),
-      );
-      request.headers.addAll(headers);
-      request.body = body;
+    // Create the request
+    var request = http.Request(
+      'POST',
+      Uri.parse('https://asnitagentapi.azurewebsites.net/UserLogin/requestauth'),
+    );
+    request.headers.addAll(headers);
+    request.body = body;
 
-      // Send the request
-      http.StreamedResponse response = await request.send();
+    // Send the request
+    http.StreamedResponse response = await request.send();
 
-      // Process the response
-      if (response.statusCode == 200) {
-        String responseBody = await response.stream.bytesToString();
+    // Process the response
+    if (response.statusCode == 200) {
+      String responseBody = await response.stream.bytesToString();
 
-        // Debug: Print the full response body
-        print('Response body: $responseBody');
+      var data = jsonDecode(responseBody);
 
-        // Parse the response body
-        var data = jsonDecode(responseBody);
-
-        // Extract and return the redirect URL
-        String? redirectUrl = data['redirecturl']; // Adjust key if necessary
-        print('Redirect URL: $redirectUrl'); // Debug: Print the redirect URL
-        return redirectUrl;
-      } else {
-        print('Error: ${response.reasonPhrase}');
-      }
-    } catch (e) {
-      print('Error fetching redirect URL: $e');
+      // Extract and return the redirect URL
+      String? redirectUrl = data['redirecturl'];
+      print('Redirect URL: $redirectUrl');
+      return redirectUrl;
+    } else {
+      print('Error: ${response.reasonPhrase}');
+      showError('Failed to fetch redirect URL');
     }
-    return null;
+  } catch (e) {
+    print('Error fetching redirect URL: $e');
   }
+  return null;
+}
+
+
 
   // Navigate to redirect page
   void navigateToRedirectPage(String redirectUrl) {
@@ -178,44 +198,53 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   // Biometric authentication method
-  Future<void> authenticateBiometric() async {
-    if (_isAuthInProgress) return;
+ Future<void> authenticateBiometric() async {
+  if (_isAuthInProgress) return;
 
-    setState(() {
-      _isAuthInProgress = true;
-    });
+  setState(() {
+    _isAuthInProgress = true;
+  });
 
-    try {
-      bool authenticated = await localAuth.authenticate(
-        localizedReason: 'Scan your fingerprint to login',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
-      );
+  try {
+    bool authenticated = await localAuth.authenticate(
+      localizedReason: 'Scan your fingerprint to login',
+      options: const AuthenticationOptions(
+        stickyAuth: true,
+        biometricOnly: true,
+      ),
+    );
 
-      if (authenticated) {
-        // Fetch the redirect URL after successful biometric login
-        String email = emailController.text
-            .trim(); // Or retrieve from shared prefs if already available
-        String password =
-            passwordController.text; // Or retrieve from shared prefs
+    if (authenticated) {
+      // Retrieve stored credentials
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String? email = preferences.getString('email');
+      String? password = preferences.getString('password');
 
-        String? redirectUrl = await fetchRedirectUrl(email, password);
+      if (email != null && password != null) {
+        // Generate encoded credentials
+        String encodedCredentials = encodeCredentials(email, password);
+
+        // Fetch the redirect URL
+        String? redirectUrl = await fetchRedirectUrl(encodedCredentials);
         if (redirectUrl != null) {
           navigateToRedirectPage(redirectUrl); // Navigate to the fetched URL
         } else {
           showError('Redirect URL not found');
         }
+      } else {
+        showError('Stored credentials not found');
       }
-    } catch (e) {
-      print('Authentication failed: $e');
-    } finally {
-      setState(() {
-        _isAuthInProgress = false;
-      });
     }
+  } catch (e) {
+    print('Authentication failed: $e');
+  } finally {
+    setState(() {
+      _isAuthInProgress = false;
+    });
   }
+}
+
+
 
   // Navigate to home method
   // void navigateToHome() {
