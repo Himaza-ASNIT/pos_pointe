@@ -46,21 +46,31 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..setNavigationDelegate(NavigationDelegate(
         onPageStarted: (String url) {
           setState(() {
-            isLoading = true;
+            // isLoading = true;
           });
         },
         onPageFinished: (String url) {
-          setState(() {
-            isLoading = false;
-          });
+  setState(() {
+    isLoading = false;
+  });
 
-          _webViewController.runJavaScript('''
-  setTimeout(function() {
-   document.querySelector('.mud-appbar').style.visibility = 'hidden';
-  }, 3900); 
-''');
+  // JavaScript to hide multiple elements
+  _webViewController.runJavaScript('''
+    (function hideElements() {
+      const selectors = ['.mud-appbar']; 
 
-        },
+      selectors.forEach(selector => {
+        const element = document.querySelector(selector);
+        if (element) {
+          element.style.display = 'none'; 
+        } else {
+          setTimeout(hideElements, 100); 
+        }
+      });
+    })();
+  ''');
+}
+
       ))
       ..loadRequest(Uri.parse(_buildUrl()));
   }
