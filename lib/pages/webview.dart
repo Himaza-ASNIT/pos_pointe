@@ -54,21 +54,21 @@ class _WebViewScreenState extends State<WebViewScreen> {
     isLoading = false;
   });
 
-  // JavaScript to hide multiple elements
-  _webViewController.runJavaScript('''
-    (function hideElements() {
-      const selectors = ['.mud-appbar']; 
+  // // JavaScript to hide multiple elements
+  // _webViewController.runJavaScript('''
+  //   (function hideElements() {
+  //     const selectors = ['.mud-appbar']; 
 
-      selectors.forEach(selector => {
-        const element = document.querySelector(selector);
-        if (element) {
-          element.style.display = 'none'; 
-        } else {
-          setTimeout(hideElements, 100); 
-        }
-      });
-    })();
-  ''');
+  //     selectors.forEach(selector => {
+  //       const element = document.querySelector(selector);
+  //       if (element) {
+  //         element.style.display = 'none'; 
+  //       } else {
+  //         setTimeout(hideElements, 100); 
+  //       }
+  //     });
+  //   })();
+  // ''');
 }
 
       ))

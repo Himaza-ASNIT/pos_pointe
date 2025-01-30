@@ -102,6 +102,7 @@ print('Base64 encoded: $base64Encoded');
   try {
     // Prepare the headers with the encoded credentials
     var headers = {
+      'Permissions': 'mobileapp',
       'Authorization': 'Basic $encodedCredentials',
       'Content-Type': 'application/json',
     };
