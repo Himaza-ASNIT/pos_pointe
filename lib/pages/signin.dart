@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pos_pointe/pages/webview.dart';
@@ -7,7 +8,7 @@ import 'package:pos_pointe/widgets/textfield.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-// Add this import for url_launcher
+import 'dart:io';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -23,7 +24,7 @@ class _SigninPageState extends State<SigninPage> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final bool isBiometricEnablled = false;
   bool _isAuthInProgress = false;
-  bool _isLoading = false;
+  String? accessdb;
 
   @override
   void initState() {
@@ -46,9 +47,7 @@ class _SigninPageState extends State<SigninPage> {
   String encodedCredentials = encodeCredentials(email, password);
   print("Encoded Credentials: $encodedCredentials");
 
-  setState(() {
-    _isLoading = true;
-  });
+  setState(() { });
 
   try {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -68,6 +67,7 @@ class _SigninPageState extends State<SigninPage> {
     // Fetch redirect URL after successful login
     String? redirectUrl = await fetchRedirectUrl(encodedCredentials);
     if (redirectUrl != null) {
+        await registerDevice();
       navigateToRedirectPage(redirectUrl); // Navigate to the fetched URL
     } else {
       showError('Redirect URL not found');
@@ -76,22 +76,15 @@ class _SigninPageState extends State<SigninPage> {
     showError('Login failed: $e');
   } finally {
     setState(() {
-      _isLoading = false;
+      // _isLoading = false;
     });
   }
 }
 
-
- 
 //method to create encoded credintial
   String encodeCredentials( email, password) {
-  // Combine username and password with a colon
   String credentials = '$email:$password';
-
-  // Convert the string into a UTF-8 encoded byte array
   List<int> bytes = utf8.encode(credentials);
-
-  // Encode the byte array into a Base64 string
   String base64Encoded = base64Encode(bytes);
 print('Base64 encoded: $base64Encoded');	
   return base64Encoded;
@@ -100,14 +93,14 @@ print('Base64 encoded: $base64Encoded');
   // Fetch redirect URL from API
  Future<String?> fetchRedirectUrl(String encodedCredentials) async {
   try {
-    // Prepare the headers with the encoded credentials
+ 
     var headers = {
       'Permissions': 'mobileapp',
       'Authorization': 'Basic $encodedCredentials',
       'Content-Type': 'application/json',
     };
 
-    // Prepare the request body
+   
     var body = jsonEncode({
       'email': emailController.text.trim(),
       'password': passwordController.text,
@@ -121,17 +114,18 @@ print('Base64 encoded: $base64Encoded');
     request.headers.addAll(headers);
     request.body = body;
 
-    // Send the request
     http.StreamedResponse response = await request.send();
 
-    // Process the response
     if (response.statusCode == 200) {
       String responseBody = await response.stream.bytesToString();
 
       var data = jsonDecode(responseBody);
-
-      // Extract and return the redirect URL
       String? redirectUrl = data['redirecturl'];
+       print('Type of accessabledb: ${data['accessabledb'].runtimeType}');
+     
+        accessdb = data['accessabledb'];
+        print("accessDB : $accessdb");
+     
       print('Redirect URL: $redirectUrl');
       return redirectUrl;
     } else {
@@ -144,7 +138,39 @@ print('Base64 encoded: $base64Encoded');
   return null;
 }
 
+//Sending devices details
+Future<void> registerDevice() async {
+  try {
+    String os = Platform.operatingSystem; 
+    final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+    String? token = await _messaging.getToken();
+    
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic bW9iaWxlYXBwdjI6dmcyWUR6VVQ3ZjRHVVFQUjlnYWI=',
+    };
 
+    var body = json.encode({
+      "accessdb": accessdb,
+      "devicetoken": token,
+      "devicetype": os,
+    });
+print("device details : $body");
+    var response = await http.post(
+      Uri.parse('https://asnitagentapi.azurewebsites.net/MobileDevices'),
+      headers: headers,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      print('Device registered successfully: ${response.body}');
+    } else {
+      print('Device registration failed: ${response.reasonPhrase}');
+    }
+  } catch (e) {
+    print('Error registering device: $e');
+  }
+}
 
   // Navigate to redirect page
   void navigateToRedirectPage(String redirectUrl) {
@@ -172,17 +198,26 @@ print('Base64 encoded: $base64Encoded');
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Enable Biometric Login?'),
+            title: Text('Enable Biometric Login?',
+            style: TextStyle(
+              color: Colors.black,
+            ),),
             content: Text(
-                'Would you like to enable fingerprint login for next time?'),
+                'Would you like to enable Biometric login for next time?',
+                style: TextStyle(
+                  color: Colors.black,
+                ),),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: Text('No'),
+                child: Text('No',
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 87, 78, 78),),),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: Text('Yes'),
+                child: Text('Yes',
+                style: TextStyle(color: const Color.fromARGB(255, 213, 1, 0),)),
               ),
             ],
           );
@@ -244,16 +279,6 @@ print('Base64 encoded: $base64Encoded');
     });
   }
 }
-
-
-
-  // Navigate to home method
-  // void navigateToHome() {
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => Navigation()),
-  //   );
-  // }
 
   // Show error method
   void showError(String message) {
@@ -321,9 +346,8 @@ print('Base64 encoded: $base64Encoded');
                     ),
                     const SizedBox(height: 10),
                     const SizedBox(height: 25),
-                    _isLoading
-                        ? CircularProgressIndicator()
-                        : Mybutton(
+                    
+                        Mybutton(
                             onTap: loginWithEmailPassword,
                             text: 'Sign In',
                           ),

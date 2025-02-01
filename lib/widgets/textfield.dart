@@ -37,6 +37,13 @@ class _MyTextFieldState extends State<MyTextField> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: const Color.fromARGB(255, 148, 149, 151),
+                        width: 2,
+                      ),
+                    ),
           suffixIcon: widget.obscureText
               ? IconButton(
                   icon: Icon(
