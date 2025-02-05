@@ -1,48 +1,76 @@
 {
   "project_info": {
-    "project_number": "1056308799846",
-    "project_id": "pospointe-4d697",
-    "storage_bucket": "pospointe-4d697.firebasestorage.app"
+    "project_number": "1022088249975",
+    "project_id": "mypospointe",
+    "storage_bucket": "mypospointe.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1056308799846:android:3a051f82e3257b3f6440a7",
+        "mobilesdk_app_id": "1:1022088249975:android:da129d23a3b5e5289a3c72",
         "android_client_info": {
-          "package_name": "com.example.pos_pointe"
+          "package_name": "com.example.mypospointe"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1056308799846-bqhud9ljgj871e3jrpiuok96j4p2bdnp.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.pos_pointe",
-            "certificate_hash": "1ba1abc490131cdad1531fa5124a05926d1ffa93"
-          }
-        },
-        {
-          "client_id": "1056308799846-trs92qq784f49ifc48eltc93ac4do6ak.apps.googleusercontent.com",
+          "client_id": "1022088249975-39vnn9nm8dssb9lrms61ovo05oseicu0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBVuiDta16ph6zJAGZA0CvWHA7gByfYYHM"
+          "current_key": "AIzaSyAnnhVaI7nmBQIhVJc1xm58wIei33unwRQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1056308799846-trs92qq784f49ifc48eltc93ac4do6ak.apps.googleusercontent.com",
+              "client_id": "1022088249975-39vnn9nm8dssb9lrms61ovo05oseicu0.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "1056308799846-bsv0j7q1a582eggct5pdhlkup3f394qc.apps.googleusercontent.com",
+              "client_id": "1022088249975-59krksrbfh80rca33atamhagkv6trklu.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.posPointe"
+                "bundle_id": "mypospointe.iosApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022088249975:android:c4df38fcf83ce2c79a3c72",
+        "android_client_info": {
+          "package_name": "com.example.pos_pointe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1022088249975-39vnn9nm8dssb9lrms61ovo05oseicu0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnnhVaI7nmBQIhVJc1xm58wIei33unwRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022088249975-39vnn9nm8dssb9lrms61ovo05oseicu0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1022088249975-59krksrbfh80rca33atamhagkv6trklu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mypospointe.iosApp"
               }
             }
           ]

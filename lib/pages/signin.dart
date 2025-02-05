@@ -243,9 +243,16 @@ class _SigninPageState extends State<SigninPage> {
       bool canCheck = await localAuth.canCheckBiometrics;
       bool isSupported = await localAuth.isDeviceSupported();
 print("can Check : $canCheck \n isSupported : $isSupported");
-      if (!canCheck || !isSupported) {
+      if (!isSupported) {
         showError(context,'Biometric authentication is not supported on this device.');
         return;
+      }else if(!canCheck){
+                showError(context,'Cannot check the Biometrics in this device');
+return;
+      }else if(!isSupported && !canCheck){
+        showError(context, "cannot check and not supported in this device");
+      }else{
+                showError(context,'nooooo');
       }
 
       List<BiometricType> availableBiometrics =

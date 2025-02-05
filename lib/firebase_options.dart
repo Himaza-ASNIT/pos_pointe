@@ -41,51 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAp8ciEdDIWJEpl4Mln7Y49DBTsPDAuXC4',
-    appId: '1:1056308799846:web:170e5ef4740da7126440a7',
-    messagingSenderId: '1056308799846',
-    projectId: 'pospointe-4d697',
-    authDomain: 'pospointe-4d697.firebaseapp.com',
-    storageBucket: 'pospointe-4d697.firebasestorage.app',
+    apiKey: 'AIzaSyBvZDaJnOei3FF8NBhCn0KW-ARvFIxJFvU',
+    appId: '1:1022088249975:web:cbc57073674191c59a3c72',
+    messagingSenderId: '1022088249975',
+    projectId: 'mypospointe',
+    authDomain: 'mypospointe.firebaseapp.com',
+    storageBucket: 'mypospointe.firebasestorage.app',
+    measurementId: 'G-KCZ33MVLW3',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBVuiDta16ph6zJAGZA0CvWHA7gByfYYHM',
-    appId: '1:1056308799846:android:3a051f82e3257b3f6440a7',
-    messagingSenderId: '1056308799846',
-    projectId: 'pospointe-4d697',
-    storageBucket: 'pospointe-4d697.firebasestorage.app',
+    apiKey: 'AIzaSyAnnhVaI7nmBQIhVJc1xm58wIei33unwRQ',
+    appId: '1:1022088249975:android:c4df38fcf83ce2c79a3c72',
+    messagingSenderId: '1022088249975',
+    projectId: 'mypospointe',
+    storageBucket: 'mypospointe.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBtPiiKG0GI7LzvK1XpKYQItgtc2CtAM7U',
-    appId: '1:1056308799846:ios:73a2078d34106f676440a7',
-    messagingSenderId: '1056308799846',
-    projectId: 'pospointe-4d697',
-    storageBucket: 'pospointe-4d697.firebasestorage.app',
-    androidClientId: '1056308799846-bqhud9ljgj871e3jrpiuok96j4p2bdnp.apps.googleusercontent.com',
-    iosClientId: '1056308799846-bsv0j7q1a582eggct5pdhlkup3f394qc.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAGKbzy2tJRgOHjaFqykF8KH-4r9P_nNL0',
+    appId: '1:1022088249975:ios:766412d074166d729a3c72',
+    messagingSenderId: '1022088249975',
+    projectId: 'mypospointe',
+    storageBucket: 'mypospointe.firebasestorage.app',
     iosBundleId: 'com.example.posPointe',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBtPiiKG0GI7LzvK1XpKYQItgtc2CtAM7U',
-    appId: '1:1056308799846:ios:73a2078d34106f676440a7',
-    messagingSenderId: '1056308799846',
-    projectId: 'pospointe-4d697',
-    storageBucket: 'pospointe-4d697.firebasestorage.app',
-    androidClientId: '1056308799846-bqhud9ljgj871e3jrpiuok96j4p2bdnp.apps.googleusercontent.com',
-    iosClientId: '1056308799846-bsv0j7q1a582eggct5pdhlkup3f394qc.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAGKbzy2tJRgOHjaFqykF8KH-4r9P_nNL0',
+    appId: '1:1022088249975:ios:766412d074166d729a3c72',
+    messagingSenderId: '1022088249975',
+    projectId: 'mypospointe',
+    storageBucket: 'mypospointe.firebasestorage.app',
     iosBundleId: 'com.example.posPointe',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyAp8ciEdDIWJEpl4Mln7Y49DBTsPDAuXC4',
-    appId: '1:1056308799846:web:7c8e55456c185c866440a7',
-    messagingSenderId: '1056308799846',
-    projectId: 'pospointe-4d697',
-    authDomain: 'pospointe-4d697.firebaseapp.com',
-    storageBucket: 'pospointe-4d697.firebasestorage.app',
+    apiKey: 'AIzaSyBvZDaJnOei3FF8NBhCn0KW-ARvFIxJFvU',
+    appId: '1:1022088249975:web:e2c93e04e40e98b09a3c72',
+    messagingSenderId: '1022088249975',
+    projectId: 'mypospointe',
+    authDomain: 'mypospointe.firebaseapp.com',
+    storageBucket: 'mypospointe.firebasestorage.app',
+    measurementId: 'G-GD4FSDYB5H',
   );
-
 }

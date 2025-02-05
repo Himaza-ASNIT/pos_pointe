@@ -52,6 +52,9 @@
 </dict>
 
 </dict>
+<key>NSFaceIDUsageDescription</key>
+<string>Allow Face ID authentication</string>
+
 <key>FirebaseAppDelegateProxyEnabled</key>
 <false/>
 <key>NSAppTransportSecurity</key>
