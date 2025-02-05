@@ -53,22 +53,22 @@ class _WebViewScreenState extends State<WebViewScreen> {
         });
 
         // JavaScript to hide multiple elements
-//   _webViewController.runJavaScript('''
-//  //   (function hideElements() {
-//   //     const selectors = ['.mud-main-content'];
+  // _webViewController.runJavaScript('''
+  //  (function hideElements() {
+  //     const selectors = ['.mud-main-content'];
 
-//   //     selectors.forEach(selector => {
-//   //       const element = document.querySelector(selector);
-//   //       if (element) {
-//   //         element.style.paddingTop = 0;
-//   //       } else {
-//   //         setTimeout(hideElements, 100);
-//   //       }
-//   //     });
-//   //   })();
+  //     selectors.forEach(selector => {
+  //       const element = document.querySelector(selector);
+  //       if (element) {
+  //         element.style.marginTop = 0;
+  //       } else {
+  //         setTimeout(hideElements, 100);
+  //       }
+  //     });
+  //   })();
 
-//   document.querySelector(".mud-main-content").style.paddingTop = 0;
-//   ''');
+
+  // ''');
       }))
       ..loadRequest(Uri.parse(_buildUrl()));
   }
@@ -139,7 +139,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.book_outlined),
-                label: "Flash Report",
+                label: "Report",
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.menu_outlined),

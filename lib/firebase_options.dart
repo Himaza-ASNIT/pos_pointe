@@ -63,6 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1056308799846',
     projectId: 'pospointe-4d697',
     storageBucket: 'pospointe-4d697.firebasestorage.app',
+    androidClientId: '1056308799846-bqhud9ljgj871e3jrpiuok96j4p2bdnp.apps.googleusercontent.com',
+    iosClientId: '1056308799846-bsv0j7q1a582eggct5pdhlkup3f394qc.apps.googleusercontent.com',
     iosBundleId: 'com.example.posPointe',
   );
 
@@ -72,6 +74,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1056308799846',
     projectId: 'pospointe-4d697',
     storageBucket: 'pospointe-4d697.firebasestorage.app',
+    androidClientId: '1056308799846-bqhud9ljgj871e3jrpiuok96j4p2bdnp.apps.googleusercontent.com',
+    iosClientId: '1056308799846-bsv0j7q1a582eggct5pdhlkup3f394qc.apps.googleusercontent.com',
     iosBundleId: 'com.example.posPointe',
   );
 
@@ -83,4 +87,5 @@ class DefaultFirebaseOptions {
     authDomain: 'pospointe-4d697.firebaseapp.com',
     storageBucket: 'pospointe-4d697.firebasestorage.app',
   );
+
 }
