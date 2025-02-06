@@ -62,6 +62,20 @@
     <key>NSAllowsArbitraryLoads</key>
     <true/>
 </dict>
+<key>UIBackgroundModes</key>
+<array>
+    <string>fetch</string>
+    <string>remote-notification</string>
+</array>
+<key>FirebaseAppDelegateProxyEnabled</key>
+<false/>
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+</dict>
+<key>NSPushNotifications</key>
+<true/>
 
 FirebaseMessagingAutoInitEnabled = NO
 </plist>
