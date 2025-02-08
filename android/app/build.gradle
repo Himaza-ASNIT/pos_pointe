@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pos_pointe"
+    namespace = "com.asnit.mypospointe"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -23,28 +23,33 @@ android {
     }
 
     defaultConfig {
-    // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-    applicationId = "com.example.pos_pointe"
-    
-    // Update minSdkVersion to 23 to meet Firebase requirements
-    minSdkVersion 23
-    
-    // You can update the following values to match your application needs.
-    // For more information, see: https://flutter.dev/to/review-gradle-config.
-    targetSdkVersion flutter.targetSdkVersion
-    versionCode flutter.versionCode
-    versionName flutter.versionName
+        applicationId = "com.asnit.mypospointe"
+        minSdkVersion 23
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutter.versionCode
+        versionName flutter.versionName
+        multiDexEnabled true
+    }
 
-    multiDexEnabled true
+    signingConfigs {
+        release {
+            // Load keystore properties
+            def keystoreProperties = new Properties()
+            def keystoreFile = rootProject.file("key.properties")
+            if (keystoreFile.exists()) {
+                keystoreProperties.load(new FileInputStream(keystoreFile))
+            }
 
-}
-
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig signingConfigs.release // Use the release signing config
         }
     }
 }

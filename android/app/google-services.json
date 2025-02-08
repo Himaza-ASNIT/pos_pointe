@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1022088249975:android:da129d23a3b5e5289a3c72",
+        "mobilesdk_app_id": "1:1022088249975:android:e2796009030f3ff99a3c72",
         "android_client_info": {
-          "package_name": "com.example.mypospointe"
+          "package_name": "com.asnit.mypospointe"
         }
       },
       "oauth_client": [
@@ -43,9 +43,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1022088249975:android:c4df38fcf83ce2c79a3c72",
+        "mobilesdk_app_id": "1:1022088249975:android:b6c17cc9d43939559a3c72",
         "android_client_info": {
-          "package_name": "com.example.pos_pointe"
+          "package_name": "com.asnit.pospointe"
         }
       },
       "oauth_client": [

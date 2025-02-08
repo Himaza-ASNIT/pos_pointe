@@ -1,4 +1,4 @@
-package com.example.pos_pointe
+package com.asnit.mypospointe
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

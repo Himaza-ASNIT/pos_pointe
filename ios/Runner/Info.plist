@@ -45,37 +45,31 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- App Transport Security -->
 	<key>NSAppTransportSecurity</key>
-<dict>
-  <key>NSAllowsArbitraryLoads</key>
-  <true/>
-</dict>
+	<dict>
+	  <key>NSAllowsArbitraryLoads</key>
+	  <true/>
+	</dict>
 
-</dict>
-<key>NSFaceIDUsageDescription</key>
-<string>Allow Face ID authentication</string>
+	<!-- Biometric Authentication -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>Allow Face ID authentication</string>
+	<key>NSLocalAuthenticationUsageDescription</key>
+	<string>Allow Touch ID authentication</string>
 
-<key>FirebaseAppDelegateProxyEnabled</key>
-<false/>
-<key>NSAppTransportSecurity</key>
-<dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-</dict>
-<key>UIBackgroundModes</key>
-<array>
-    <string>fetch</string>
-    <string>remote-notification</string>
-</array>
-<key>FirebaseAppDelegateProxyEnabled</key>
-<false/>
-<key>NSAppTransportSecurity</key>
-<dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-</dict>
-<key>NSPushNotifications</key>
-<true/>
+	<!-- Firebase -->
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 
-FirebaseMessagingAutoInitEnabled = NO
+	<!-- Push Notifications -->
+	<key>UIBackgroundModes</key>
+	<array>
+	    <string>fetch</string>
+	    <string>remote-notification</string>
+	</array>
+	<key>NSPushNotifications</key>
+	<true/>
+</dict>
 </plist>
