@@ -25,6 +25,8 @@ class _SigninPageState extends State<SigninPage> {
   final bool isBiometricEnablled = false;
   bool _isAuthInProgress = false;
   String? accessdb;
+  late List<BiometricType> availableBiometrics;
+  late bool canAuthenticate;
 
   @override
   void initState() {
@@ -39,7 +41,7 @@ class _SigninPageState extends State<SigninPage> {
 
     // Check if email and password are not empty
     if (email.isEmpty || password.isEmpty) {
-      showError(context,'Email and password cannot be empty');
+      showError(context, 'Email and password cannot be empty');
       return;
     }
 
@@ -54,24 +56,30 @@ class _SigninPageState extends State<SigninPage> {
       String? redirectUrl = await fetchRedirectUrl(encodedCredentials);
       if (redirectUrl != null) {
         SharedPreferences preferences = await SharedPreferences.getInstance();
+        final LocalAuthentication auth = LocalAuthentication();
 
-      // Prompt user for biometric login
-      bool? enableBiometric = await showBiometricDialog();
-      if (enableBiometric == true) {
-        preferences.setBool('biometric_enabled', true);
+        // Check if biometrics are available
+        bool canCheckBiometrics = await auth.canCheckBiometrics;
+        bool isDeviceSupported = await auth.isDeviceSupported();
+
+        if (canCheckBiometrics && isDeviceSupported) {
+          bool? enableBiometric = await showBiometricDialog();
+          if (enableBiometric == true) {
+            preferences.setBool('biometric_enabled', true);
+          }
+        }
 
         // Store credentials securely
         await preferences.setString('email', email);
         await preferences.setString('password', password);
         await preferences.setString('encoded_credentials', encodedCredentials);
         print('Biometric login enabled, credentials stored.');
-      }
+
         await registerDevice();
-        navigateToRedirectPage(redirectUrl); // Navigate to the fetched URL
-      } 
-      
+        navigateToRedirectPage(redirectUrl);
+      }
     } catch (e) {
-      showError(context,'Login failed: $e');
+      showError(context, 'Login failed: $e');
     } finally {
       setState(() {});
     }
@@ -119,7 +127,7 @@ class _SigninPageState extends State<SigninPage> {
         accessdb = data['accessabledb'];
         return redirectUrl;
       } else {
-        showError(context,'Email or password wrong');
+        showError(context, 'Enter a valid Email & Password');
       }
     } catch (e) {
       print('Error fetching redirect URL: $e');
@@ -175,10 +183,10 @@ class _SigninPageState extends State<SigninPage> {
           ),
         );
       } else {
-        showError(context,'Invalid URL format: $redirectUrl');
+        print('Invalid URL format: $redirectUrl');
       }
     } catch (e) {
-      showError(context,'Error during navigation: $e');
+      print('Error during navigation: $e');
     }
   }
 
@@ -189,7 +197,7 @@ class _SigninPageState extends State<SigninPage> {
         builder: (context) {
           return AlertDialog(
             title: Text(
-              'Enable Biometric Login?',
+              'Enable Biometric Login',
               style: TextStyle(
                 color: Colors.black,
               ),
@@ -240,15 +248,12 @@ class _SigninPageState extends State<SigninPage> {
     });
 
     try {
-      List<BiometricType> availableBiometrics =
-          await localAuth.getAvailableBiometrics();
+      availableBiometrics = await localAuth.getAvailableBiometrics();
       bool canAuthenticate =
           availableBiometrics.contains(BiometricType.strong) ||
               availableBiometrics.contains(BiometricType.weak);
-
-      print("Availabe: $canAuthenticate");
       if (!canAuthenticate) {
-        showError(context,'No biometric authentication available');
+        print('No biometric authentication available');
         return;
       } else {
         bool authenticated = await localAuth.authenticate(
@@ -261,7 +266,7 @@ class _SigninPageState extends State<SigninPage> {
         );
 
         if (!authenticated) {
-          showError(context,'Biometric authentication failed');
+          showError(context, 'Biometric authentication failed');
           return;
         }
 
@@ -272,7 +277,7 @@ class _SigninPageState extends State<SigninPage> {
         String? password = preferences.getString('password');
 
         if (email == null || password == null) {
-          showError(context,'Stored credentials not found');
+          showError(context, 'Stored credentials not found');
           return;
         }
 
@@ -284,11 +289,13 @@ class _SigninPageState extends State<SigninPage> {
 
         if (redirectUrl != null) {
           navigateToRedirectPage(redirectUrl);
-        } 
+        }
       }
     } catch (e) {
       // showError('Authentication error: ${e.toString()}');
-      showError(context, 'Authentication error: ${e.toString()}');
+      showError(context,
+          'Too many wrong attepts. Try again after 30 seconds or login with credentials');
+      print('Authentication error: ${e.toString()}');
     } finally {
       if (mounted) {
         setState(() {
@@ -298,40 +305,41 @@ class _SigninPageState extends State<SigninPage> {
     }
   }
 
-
-void showError(BuildContext context, String message, {Alignment alignment = Alignment.topCenter}) {
-  final overlay = Overlay.of(context);
-  final overlayEntry = OverlayEntry(
-    builder: (context) => Positioned(
-      top: alignment == Alignment.topCenter ? 50 : null,
-      bottom: alignment == Alignment.bottomCenter ? 50 : null,
-      left: 20,
-      right: 20,
-      child: Material(
-        color: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: Color.fromARGB(255, 224,224,224),
-            
-          ),
-          child: Text(
-            message,
-            style: const TextStyle(color: Color.fromARGB(255, 207, 18, 18), fontSize: 19, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
+  void showError(BuildContext context, String message,
+      {Alignment alignment = Alignment.topCenter}) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: alignment == Alignment.topCenter ? 50 : null,
+        bottom: alignment == Alignment.bottomCenter ? 50 : null,
+        left: 20,
+        right: 20,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 224, 224, 224),
+            ),
+            child: Text(
+              message,
+              style: const TextStyle(
+                  color: Color.fromARGB(255, 207, 18, 18),
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
 
-  overlay.insert(overlayEntry);
+    overlay.insert(overlayEntry);
 
-  Future.delayed(const Duration(seconds: 3), () {
-    overlayEntry.remove();
-  });
-}
-
+    Future.delayed(const Duration(seconds: 3), () {
+      overlayEntry.remove();
+    });
+  }
 
   @override
   void dispose() {

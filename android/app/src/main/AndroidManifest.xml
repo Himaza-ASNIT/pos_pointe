@@ -10,7 +10,7 @@
 
 
     <application
-        android:label="pos_pointe"
+        android:label="My pospointe"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         

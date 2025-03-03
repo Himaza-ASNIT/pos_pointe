@@ -32,6 +32,7 @@ class _MyTextFieldState extends State<MyTextField> {
       child: TextField(
         controller: widget.controller,
         obscureText: widget.obscureText ? _isObscured : false,
+        cursorColor:Colors.black45,
         decoration: InputDecoration(
           hintText: widget.hintText,
           border: OutlineInputBorder(
