@@ -14,7 +14,7 @@ class WebViewScreen extends StatefulWidget {
 class _WebViewScreenState extends State<WebViewScreen> {
   int _currentIndex = 0;
   late WebViewController _webViewController;
-  bool isLoading = true;
+  // bool isLoading = true;
 
   final List<String> pagePaths = [
     " ",
@@ -43,35 +43,33 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void _initializeWebViewController() {
     _webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(NavigationDelegate(
-        onPageStarted: (String url) {
-          setState(() {
-            // isLoading = true;
-          });
-        },
-        onPageFinished: (String url) {
-  setState(() {
-    isLoading = false;
-  });
+      ..setNavigationDelegate(NavigationDelegate(onPageStarted: (String url) {
+        setState(() {
+          // isLoading = true;
+        });
+      }, onPageFinished: (String url) {
+        setState(() {
+          // isLoading = false;
+        });
 
-  // JavaScript to hide multiple elements
-  _webViewController.runJavaScript('''
-    (function hideElements() {
-      const selectors = ['.mud-appbar']; 
+        // JavaScript to hide multiple elements
+  // _webViewController.runJavaScript('''
+  //  (function hideElements() {
+  //     const selectors = ['.mud-main-content'];
 
-      selectors.forEach(selector => {
-        const element = document.querySelector(selector);
-        if (element) {
-          element.style.display = 'none'; 
-        } else {
-          setTimeout(hideElements, 100); 
-        }
-      });
-    })();
-  ''');
-}
+  //     selectors.forEach(selector => {
+  //       const element = document.querySelector(selector);
+  //       if (element) {
+  //         element.style.marginTop = 0;
+  //       } else {
+  //         setTimeout(hideElements, 100);
+  //       }
+  //     });
+  //   })();
 
-      ))
+
+  // ''');
+      }))
       ..loadRequest(Uri.parse(_buildUrl()));
   }
 
@@ -93,54 +91,62 @@ class _WebViewScreenState extends State<WebViewScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("My POS Pointe"),
+          title: const Text(
+            "My POSpointe",
+            style: TextStyle(
+                color: Colors.white, fontSize: 30, fontWeight: FontWeight.w500),
+          ),
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.white,
+          backgroundColor: const Color.fromARGB(255, 213, 1, 0),
         ),
         body: Stack(
           children: [
             WebViewWidget(controller: _webViewController),
-            if (isLoading)
-              const Center(
-                child: CircularProgressIndicator(),
-              ),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: _onBottomNavigationTapped,
-          type: BottomNavigationBarType.fixed,
-          iconSize: 20,
-          selectedLabelStyle: const TextStyle(
-            color: Colors.grey,
-            fontWeight: FontWeight.w500,
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(color: Colors.grey, width: 1),
+            ),
           ),
-          selectedItemColor: Colors.grey,
-          unselectedItemColor: Colors.black,
-          selectedFontSize: 15,
-          unselectedFontSize: 15,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard),
-              label: "Dashboard",
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: _onBottomNavigationTapped,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.white,
+            iconSize: 18,
+            selectedLabelStyle: const TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.w500,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_shopping_cart_outlined),
-              label: "Items",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.fastfood_outlined),
-              label: "Modifiers",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.book_outlined),
-              label: "Flash Report",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.menu_outlined),
-              label: "Menu",
-            ),
-          ],
+            selectedItemColor: const Color.fromARGB(255, 213, 1, 0),
+            unselectedItemColor: Colors.black,
+            selectedFontSize: 15,
+            unselectedFontSize: 15,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.dashboard),
+                label: "Dashboard",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.add_shopping_cart_outlined),
+                label: "Items",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.fastfood_outlined),
+                label: "Modifiers",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.book_outlined),
+                label: "Report",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.menu_outlined),
+                label: "Menu",
+              ),
+            ],
+          ),
         ),
       ),
     );

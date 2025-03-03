@@ -1,26 +1,79 @@
 {
   "project_info": {
-    "project_number": "1056308799846",
-    "project_id": "pospointe-4d697",
-    "storage_bucket": "pospointe-4d697.firebasestorage.app"
+    "project_number": "1022088249975",
+    "project_id": "mypospointe",
+    "storage_bucket": "mypospointe.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1056308799846:android:3a051f82e3257b3f6440a7",
+        "mobilesdk_app_id": "1:1022088249975:android:e2796009030f3ff99a3c72",
         "android_client_info": {
-          "package_name": "com.example.pos_pointe"
+          "package_name": "com.asnit.mypospointe"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1022088249975-39vnn9nm8dssb9lrms61ovo05oseicu0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyBVuiDta16ph6zJAGZA0CvWHA7gByfYYHM"
+          "current_key": "AIzaSyAnnhVaI7nmBQIhVJc1xm58wIei33unwRQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022088249975-39vnn9nm8dssb9lrms61ovo05oseicu0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1022088249975-59krksrbfh80rca33atamhagkv6trklu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mypospointe.iosApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022088249975:android:b6c17cc9d43939559a3c72",
+        "android_client_info": {
+          "package_name": "com.asnit.pospointe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1022088249975-39vnn9nm8dssb9lrms61ovo05oseicu0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnnhVaI7nmBQIhVJc1xm58wIei33unwRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022088249975-39vnn9nm8dssb9lrms61ovo05oseicu0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1022088249975-59krksrbfh80rca33atamhagkv6trklu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mypospointe.iosApp"
+              }
+            }
+          ]
         }
       }
     }
