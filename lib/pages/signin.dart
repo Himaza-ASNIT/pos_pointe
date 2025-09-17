@@ -234,6 +234,7 @@ class _SigninPageState extends State<SigninPage> {
   Future<void> checkBiometricLogin() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     bool isEnabled = preferences.getBool('biometric_enabled') ?? false;
+
     if (isEnabled) {
       authenticateBiometric();
     }
@@ -248,9 +249,14 @@ class _SigninPageState extends State<SigninPage> {
     });
 
     try {
+      final bool can = await localAuth.canCheckBiometrics;
+      print("can: $can");
       availableBiometrics = await localAuth.getAvailableBiometrics();
+      print("available biometric: $availableBiometrics");
       bool canAuthenticate =
           availableBiometrics.contains(BiometricType.strong) ||
+              availableBiometrics.contains(BiometricType.face) ||
+              availableBiometrics.contains(BiometricType.fingerprint) ||
               availableBiometrics.contains(BiometricType.weak);
       if (!canAuthenticate) {
         print('No biometric authentication available');
@@ -260,8 +266,8 @@ class _SigninPageState extends State<SigninPage> {
           localizedReason: 'Use Face ID or Fingerprint to authenticate',
           options: const AuthenticationOptions(
             biometricOnly: true,
-            useErrorDialogs: true,
-            stickyAuth: true,
+            // useErrorDialogs: true,
+            // stickyAuth: true,
           ),
         );
 

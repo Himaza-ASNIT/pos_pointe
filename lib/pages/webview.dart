@@ -95,6 +95,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             "My POSpointe",
             style: TextStyle(
                 color: Colors.white, fontSize: 30, fontWeight: FontWeight.w500),
+                textAlign: TextAlign.left,
           ),
           automaticallyImplyLeading: false,
           backgroundColor: const Color.fromARGB(255, 213, 1, 0),
