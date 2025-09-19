@@ -1,0 +1,2 @@
+/Users/asnitinc/Documents/pos_pointe/android/app/.cxx/RelWithDebInfo/h1a5s4r5/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/asnitinc/Documents/pos_pointe/android/app/.cxx/RelWithDebInfo/h1a5s4r5/armeabi-v7a/CMakeFiles/rebuild_cache.dir
