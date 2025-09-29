@@ -282,7 +282,7 @@ class _SigninPageState extends State<SigninPage> {
         String? email = preferences.getString('email');
         String? password = preferences.getString('password');
 
-        if (email == null || password == null) {
+        if (password == null) {
           showError(context, 'Stored credentials not found');
           return;
         }

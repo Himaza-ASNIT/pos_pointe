@@ -18,8 +18,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   final List<String> pagePaths = [
     " ",
-    "https://mypospointe.com/items",
-    "https://mypospointe.com/modifers",
+    "https://mypospointe.com/shiftcloses",
+    "https://mypospointe.com/ItemSales",
     "https://mypospointe.com/flash_report",
     "https://mypospointe.com/mobileview",
   ];
@@ -53,22 +53,21 @@ class _WebViewScreenState extends State<WebViewScreen> {
         });
 
         // JavaScript to hide multiple elements
-  // _webViewController.runJavaScript('''
-  //  (function hideElements() {
-  //     const selectors = ['.mud-main-content'];
+        // _webViewController.runJavaScript('''
+        //  (function hideElements() {
+        //     const selectors = ['.mud-main-content'];
 
-  //     selectors.forEach(selector => {
-  //       const element = document.querySelector(selector);
-  //       if (element) {
-  //         element.style.marginTop = 0;
-  //       } else {
-  //         setTimeout(hideElements, 100);
-  //       }
-  //     });
-  //   })();
+        //     selectors.forEach(selector => {
+        //       const element = document.querySelector(selector);
+        //       if (element) {
+        //         element.style.marginTop = 0;
+        //       } else {
+        //         setTimeout(hideElements, 100);
+        //       }
+        //     });
+        //   })();
 
-
-  // ''');
+        // ''');
       }))
       ..loadRequest(Uri.parse(_buildUrl()));
   }
@@ -95,7 +94,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             "My POSpointe",
             style: TextStyle(
                 color: Colors.white, fontSize: 30, fontWeight: FontWeight.w500),
-                textAlign: TextAlign.left,
+            textAlign: TextAlign.left,
           ),
           automaticallyImplyLeading: false,
           backgroundColor: const Color.fromARGB(255, 213, 1, 0),
@@ -131,12 +130,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
                 label: "Dashboard",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.add_shopping_cart_outlined),
-                label: "Items",
+                icon: Icon(Icons.lock_clock_outlined),
+                label: "Shift Close",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.fastfood_outlined),
-                label: "Modifiers",
+                icon: Icon(Icons.add_shopping_cart_outlined),
+                label: "Sales",
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.book_outlined),

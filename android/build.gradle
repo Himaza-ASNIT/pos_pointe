@@ -1,12 +1,16 @@
 buildscript {
-    repositories {  
+    repositories {
         google()
         mavenCentral()
-        gradlePluginPortal() 
+        gradlePluginPortal()
     }
-    
+
     dependencies {
-        classpath 'com.google.gms:google-services:4.3.14' 
+        // 🔹 Android Gradle Plugin (AGP) — required for Gradle 8.13
+        classpath "com.android.tools.build:gradle:8.6.1"
+
+        // 🔹 Google Services for Firebase
+        classpath "com.google.gms:google-services:4.3.14"
     }
 }
 
