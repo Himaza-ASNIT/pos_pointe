@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
-
     <application
         android:label="My pospointe"
         android:name="${applicationName}"
@@ -46,12 +45,12 @@
             android:value="false" />
 
         <meta-data
-    android:name="com.google.firebase.messaging.default_notification_channel_id"
-    android:value="high_importance_channel"/>
-
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="high_importance_channel"/>
     </application>
-        <uses-feature android:name="android.hardware.fingerprint" android:required="false"/>
-        <uses-feature android:name="android.hardware.biometrics" android:required="false"/>
+
+    <uses-feature android:name="android.hardware.fingerprint" android:required="false"/>
+    <uses-feature android:name="android.hardware.biometrics" android:required="false"/>
 
     <!-- Required to query activities that can process text -->
     <queries>
