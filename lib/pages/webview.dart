@@ -4,8 +4,10 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewScreen extends StatefulWidget {
   final String redirectUrl;
-
-  const WebViewScreen({Key? key, required this.redirectUrl}) : super(key: key);
+  final String accessdb;
+  const WebViewScreen(
+      {Key? key, required this.redirectUrl, required this.accessdb})
+      : super(key: key);
 
   @override
   _WebViewScreenState createState() => _WebViewScreenState();
@@ -16,13 +18,13 @@ class _WebViewScreenState extends State<WebViewScreen> {
   late WebViewController _webViewController;
   // bool isLoading = true;
 
-  final List<String> pagePaths = [
-    " ",
-    "https://mypospointe.com/items",
-    "https://mypospointe.com/modifers",
-    "https://mypospointe.com/flash_report",
-    "https://mypospointe.com/mobileview",
-  ];
+  // final List<String> pagePaths = [
+  //   " ",
+  //   "https://mypospointe.com/shiftcloses",
+  //   "https://mypospointe.com/ItemSales",
+  //   "https://mypospointe.com/flash_report",
+  //   "https://mypospointe.com/mobileview",
+  // ];
 
   @override
   void initState() {
@@ -31,12 +33,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 
   // Build the full URL for the selected page
+  // String _buildUrl() {
+  //   if (_currentIndex == 0) {
+  //     return widget.redirectUrl;
+  //   } else {
+  //     return pagePaths[_currentIndex];
+  //   }
+  // }
   String _buildUrl() {
-    if (_currentIndex == 0) {
-      return widget.redirectUrl;
-    } else {
-      return pagePaths[_currentIndex];
-    }
+    return _pagePaths[_currentIndex];
   }
 
   // Initialize WebViewController
@@ -53,22 +58,21 @@ class _WebViewScreenState extends State<WebViewScreen> {
         });
 
         // JavaScript to hide multiple elements
-  // _webViewController.runJavaScript('''
-  //  (function hideElements() {
-  //     const selectors = ['.mud-main-content'];
+        // _webViewController.runJavaScript('''
+        //  (function hideElements() {
+        //     const selectors = ['.mud-main-content'];
 
-  //     selectors.forEach(selector => {
-  //       const element = document.querySelector(selector);
-  //       if (element) {
-  //         element.style.marginTop = 0;
-  //       } else {
-  //         setTimeout(hideElements, 100);
-  //       }
-  //     });
-  //   })();
+        //     selectors.forEach(selector => {
+        //       const element = document.querySelector(selector);
+        //       if (element) {
+        //         element.style.marginTop = 0;
+        //       } else {
+        //         setTimeout(hideElements, 100);
+        //       }
+        //     });
+        //   })();
 
-
-  // ''');
+        // ''');
       }))
       ..loadRequest(Uri.parse(_buildUrl()));
   }
@@ -79,6 +83,84 @@ class _WebViewScreenState extends State<WebViewScreen> {
       _currentIndex = index;
     });
     _webViewController.loadRequest(Uri.parse(_buildUrl()));
+  }
+
+  bool hasMultipleAccess() {
+    // Split by comma, trim empty strings
+    final List<String> accessList =
+        widget.accessdb.split(',').where((id) => id.trim().isNotEmpty).toList();
+    print(accessList);
+    return accessList.length > 1;
+  }
+
+  List<BottomNavigationBarItem> _buildBottomNavItems() {
+    if (hasMultipleAccess()) {
+      return const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.dashboard),
+          label: "Dashboard",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.storefront_outlined),
+          label: "Overview",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.add_shopping_cart_outlined),
+          label: "Sales",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.book_outlined),
+          label: "Report",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.menu_outlined),
+          label: "Menu",
+        ),
+      ];
+    } else {
+      return const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.dashboard),
+          label: "Dashboard",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.lock_clock_outlined),
+          label: "Shift Close",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.add_shopping_cart_outlined),
+          label: "Sales",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.book_outlined),
+          label: "Report",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.menu_outlined),
+          label: "Menu",
+        ),
+      ];
+    }
+  }
+
+  List<String> get _pagePaths {
+    if (hasMultipleAccess()) {
+      return [
+        widget.redirectUrl,
+        "https://mypospointe.com/multistores",
+        "https://mypospointe.com/ItemSales",
+        "https://mypospointe.com/flash_report",
+        "https://mypospointe.com/mobileview",
+      ];
+    } else {
+      return [
+        widget.redirectUrl,
+        "https://mypospointe.com/shiftcloses",
+        "https://mypospointe.com/ItemSales",
+        "https://mypospointe.com/flash_report",
+        "https://mypospointe.com/mobileview",
+      ];
+    }
   }
 
   @override
@@ -95,7 +177,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             "My POSpointe",
             style: TextStyle(
                 color: Colors.white, fontSize: 30, fontWeight: FontWeight.w500),
-                textAlign: TextAlign.left,
+            textAlign: TextAlign.left,
           ),
           automaticallyImplyLeading: false,
           backgroundColor: const Color.fromARGB(255, 213, 1, 0),
@@ -119,34 +201,35 @@ class _WebViewScreenState extends State<WebViewScreen> {
             iconSize: 18,
             selectedLabelStyle: const TextStyle(
               color: Colors.grey,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.normal,
             ),
             selectedItemColor: const Color.fromARGB(255, 213, 1, 0),
             unselectedItemColor: Colors.black,
             selectedFontSize: 15,
             unselectedFontSize: 15,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.dashboard),
-                label: "Dashboard",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.add_shopping_cart_outlined),
-                label: "Items",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.fastfood_outlined),
-                label: "Modifiers",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.book_outlined),
-                label: "Report",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.menu_outlined),
-                label: "Menu",
-              ),
-            ],
+            // items: const [
+            //   BottomNavigationBarItem(
+            //     icon: Icon(Icons.dashboard),
+            //     label: "Dashboard",
+            //   ),
+            //   BottomNavigationBarItem(
+            //     icon: Icon(Icons.lock_clock_outlined),
+            //     label: "Shift Close",
+            //   ),
+            //   BottomNavigationBarItem(
+            //     icon: Icon(Icons.add_shopping_cart_outlined),
+            //     label: "Sales",
+            //   ),
+            //   BottomNavigationBarItem(
+            //     icon: Icon(Icons.book_outlined),
+            //     label: "Report",
+            //   ),
+            //   BottomNavigationBarItem(
+            //     icon: Icon(Icons.menu_outlined),
+            //     label: "Menu",
+            //   ),
+            // ],
+            items: _buildBottomNavItems(),
           ),
         ),
       ),

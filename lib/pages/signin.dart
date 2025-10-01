@@ -76,7 +76,7 @@ class _SigninPageState extends State<SigninPage> {
         print('Biometric login enabled, credentials stored.');
 
         await registerDevice();
-        navigateToRedirectPage(redirectUrl);
+        navigateToRedirectPage(redirectUrl, accessdb!);
       }
     } catch (e) {
       showError(context, 'Login failed: $e');
@@ -171,7 +171,7 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   // Navigate to redirect page
-  void navigateToRedirectPage(String redirectUrl) {
+  void navigateToRedirectPage(String redirectUrl, String accessdb) {
     try {
       if (redirectUrl.startsWith('http') || redirectUrl.startsWith('https')) {
         Navigator.push(
@@ -179,6 +179,7 @@ class _SigninPageState extends State<SigninPage> {
           MaterialPageRoute(
             builder: (context) => WebViewScreen(
               redirectUrl: redirectUrl,
+              accessdb: accessdb,
             ),
           ),
         );
@@ -282,11 +283,6 @@ class _SigninPageState extends State<SigninPage> {
         String? email = preferences.getString('email');
         String? password = preferences.getString('password');
 
-        if (email == null || password == null) {
-          showError(context, 'Stored credentials not found');
-          return;
-        }
-
         // Generate encoded credentials
         String encodedCredentials = encodeCredentials(email, password);
 
@@ -294,7 +290,7 @@ class _SigninPageState extends State<SigninPage> {
         String? redirectUrl = await fetchRedirectUrl(encodedCredentials);
 
         if (redirectUrl != null) {
-          navigateToRedirectPage(redirectUrl);
+          navigateToRedirectPage(redirectUrl, accessdb!);
         }
       }
     } catch (e) {

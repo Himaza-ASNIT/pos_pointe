@@ -28,8 +28,12 @@ Future<void> initNotification() async {
     badge: true,
     sound: true,
   );
-  String? token = await messaging.getToken();
-  print("FCM Token: $token");
+  try {
+    String? token = await FirebaseMessaging.instance.getToken();
+    print("FCM Token: $token");
+  } catch (e) {
+    print("Error getting FCM token: $e");
+  }
 }
 
 class MyApp extends StatelessWidget {
